@@ -2,24 +2,21 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors'; // Importa el paquete cors
 import authRoutes from './routes/auth.routes.js';
-import { createProduct, getProducts } from './controllers/products.controller.js';
 
 const app = express();
 
 // Configurar CORS
 const corsOptions = {
-  origin: '*', // Dirección de tu frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos 
-  allowedHeaders: ['Content-Type', 'Authorization'], // Cabeceras permitidas
+  origin: ['http://localhost:5174', 'https://lsneakers-backend.vercel.app'], // Permite ambas direcciones
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
-app.use(cors(corsOptions)); // Agregar middleware de CORS
+app.use(cors(corsOptions));
+
  
 // Middleware de Morgan para registrar las peticiones
 app.use(morgan('dev'));    
 app.use(express.json()); 
-// Ruta para subir productos
-app.post('/api/products', createProduct); 
-app.get('/api/products', getProducts);
 
 // Rutas de autenticación
 app.use("/api", authRoutes); 

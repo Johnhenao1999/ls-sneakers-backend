@@ -22,7 +22,7 @@ export const createProduct = async (req, res) => {
 
     await newProduct.save();
     res.status(201).json(newProduct);
-  } catch (error) {
+  } catch (error) { 
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
