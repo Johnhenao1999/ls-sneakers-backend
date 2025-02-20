@@ -1,8 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import cors from 'cors';
-import authRoutes from './routes/auth.routes.js';
+import cors from 'cors'; 
+import authRoutes from './src/routes/auth.routes.js';
 
 const app = express();
 
@@ -24,21 +24,20 @@ app.get('/', (req, res) => {
   res.send('Hello from Vercel!');
 });
 
-// Conexión a MongoDB antes de exportar `app`
+// Conexión a la base de datos
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://lsneakers:r3DcgZw42iE6t2Ef@lsneakers.pg47i.mongodb.net/?retryWrites=true&w=majority&appName=lsneakers', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('✅ Connected to MongoDB');
+    await mongoose.connect(
+      'mongodb+srv://lsneakers:r3DcgZw42iE6t2Ef@lsneakers.pg47i.mongodb.net/?retryWrites=true&w=majority&appName=lsneakers'
+    );
+    console.log('Connected to MongoDB');
   } catch (error) {
-    console.error('❌ MongoDB Connection Error:', error);
+    console.error(error);
   }
 };
 
-// Conéctate a MongoDB antes de exportar `app`
-await connectDB();
+// ⚠️ IMPORTANTE: No uses app.listen() directamente
+connectDB();
 
+// 🔥 Exporta `app` para que Vercel lo reconozca
 export default app;
- 
