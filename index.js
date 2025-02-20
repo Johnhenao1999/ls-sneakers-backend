@@ -8,7 +8,7 @@ const app = express();
 
 // Configurar CORS
 const corsOptions = {
-  origin: ['*', 'https://lsneakers-backend.vercel.app'],
+  origin: ['*', 'https://lsneakers.vercel.app/'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
