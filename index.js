@@ -25,19 +25,26 @@ app.get('/', (req, res) => {
 });
 
 // Conexión a la base de datos
-const connectDB = async () => {
+const connectDb = async () => {
   try {
-    await mongoose.connect(
-      'mongodb+srv://lsneakers:r3DcgZw42iE6t2Ef@lsneakers.pg47i.mongodb.net/?retryWrites=true&w=majority&appName=lsneakers'
-    );
-    console.log('Connected to MongoDB');
+      await mongoose.connect('mongodb+srv://lsneakers:r3DcgZw42iE6t2Ef@lsneakers.pg47i.mongodb.net/?retryWrites=true&w=majority&appName=lsneakers');
+      console.log('Conectado correctamente a la base de datos');
   } catch (error) {
-    console.error(error);
+      console.error('Error al conectar a la base de datos:', error);
+      process.exit(1); // Termina el proceso si no puede conectar a la base de datos
   }
 };
 
 // ⚠️ IMPORTANTE: No uses app.listen() directamente
-connectDB();
+
+const startServer = async () => {
+  await connectDb();
+  app.listen(3000, () => {
+      console.log("Server on port 3000");
+  });
+};
+
+startServer();
 
 // 🔥 Exporta `app` para que Vercel lo reconozca
 export default app;
