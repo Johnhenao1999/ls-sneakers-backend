@@ -8,14 +8,34 @@ const app = express();
 
 // Configurar CORS
 const corsOptions = {
-  origin: ['*', 'https://lsneakers.vercel.app/'],
+  origin: ['http://localhost:5173', 'https://lsneakers.vercel.app'], // Acepta ambos orígenes
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
+
 app.use(morgan('dev'));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:5173', 'https://lsneakers.vercel.app'];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Manejo de preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 
 app.use('/api', authRoutes);
 
