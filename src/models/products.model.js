@@ -17,12 +17,16 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  category: {
-    type: String, // La categoría puede ser un string o un ID relacionado a otra colección
+  branch: {
+    type: String,
+    required: true
+  },
+  gender: {
+    type: String,
     required: true
   },
   sizes: {
-    type: [String], // Arreglo de strings que representan las tallas
+    type: [String],
     required: true
   }
 }, {
