@@ -3,10 +3,10 @@ import Products from '../models/products.model.js';
 // Endpoint para crear un producto (sin manejo de imágenes)
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, imageUrl, branch, gender , sizes } = req.body;
+    const { name, price, discountPrice, onSale , imageUrl, branch, gender , sizes } = req.body;
 
     // Validar si falta algún dato necesario
-    if (!name || !price || !imageUrl || !branch || !gender || !sizes || !Array.isArray(sizes)) {
+    if (!name || !price || !discountPrice || !onSale  || !imageUrl || !branch || !gender || !sizes || !Array.isArray(sizes)) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios, y las tallas deben ser un arreglo' });
     }
 
@@ -14,6 +14,8 @@ export const createProduct = async (req, res) => {
     const newProduct = new Products({
       name,
       price,
+      discountPrice,
+      onSale,
       imageUrl,
       branch,
       gender,
