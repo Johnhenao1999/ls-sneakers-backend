@@ -13,6 +13,14 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  discountPrice: {
+    type: String,
+    defauult: null
+  },
+  onSale: {
+    type: Boolean,
+    default: false
+  },
   imageUrl: {
     type: String,
     required: true
