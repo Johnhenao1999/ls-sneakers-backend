@@ -21,8 +21,8 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  imageUrl: {
-    type: String,
+  imageUrls: {
+    type: [String],
     required: true
   },
   branch: {
