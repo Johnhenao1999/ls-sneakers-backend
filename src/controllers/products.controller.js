@@ -6,9 +6,9 @@ export const createProduct = async (req, res) => {
     const { name, price, discountPrice, onSale , imageUrls, branch, gender , sizes } = req.body;
 
     // Validar si falta algún dato necesario
-    if (!name || !price || !discountPrice || !onSale  || imageUrls.length === 0 || !branch || !gender || !sizes || !Array.isArray(sizes)) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios, y las tallas deben ser un arreglo' });
-    }
+    if (!name || !price || imageUrls?.length === 0 || !branch || !gender || !Array.isArray(sizes) || sizes.length === 0) {
+      return res.status(400).json({ error: 'Todos los campos obligatorios deben ser proporcionados correctamente' });
+    }    
 
     // Crear y guardar el producto en la base de datos
     const newProduct = new Products({
