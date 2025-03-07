@@ -55,7 +55,7 @@ export const updateProduct = async (req, res) => {
   try {
     console.log(req.params)
     const { id } = req.params; // Obtener el ID del producto desde los parámetros de la URL
-    const { name, price, discountPrice, onSale, imageUrl, branch, gender, sizes } = req.body;
+    const { name, price, discountPrice, onSale, imageUrls, branch, gender, sizes } = req.body;
     console.log(req.body)
 
     // Verificar si el producto existe
@@ -63,18 +63,19 @@ export const updateProduct = async (req, res) => {
     if (!existingProduct) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-
-    // Actualizar el producto con los nuevos datos
+   
+    // Actualizar el producto con los nuevos datos 
     const updatedProduct = await Products.findByIdAndUpdate(
       id,
-      { name, price, discountPrice, onSale, imageUrl, branch, gender, sizes },
+      { name, price, discountPrice, onSale, imageUrls, branch, gender, sizes },
       { new: true, runValidators: true } // new: true devuelve el producto actualizado
     );
 
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al actualizar el producto' });
+    res.status(500).json({ error: 'Error al actualizar el producto' }); 
   }
 };
 
+ 
