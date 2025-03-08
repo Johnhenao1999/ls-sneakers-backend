@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { login, register } from "../controllers/auth.controller.js";
+import { adminLogin } from "../controllers/auth.controller.js";
 import { createProduct, getProducts, updateProduct, deleteProduct  } from "../controllers/products.controller.js";
 
 const router = Router();
 
-router.post('/register', register)
-router.post('/login', login)
+router.post("/admin/login", adminLogin);
 router.post('/products', createProduct)
 router.get('/products', getProducts);
 router.put('/products/:id', updateProduct);
