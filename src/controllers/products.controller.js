@@ -78,4 +78,24 @@ export const updateProduct = async (req, res) => {
   }
 };
 
+// Endpoint para eliminar un producto por ID
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verificar si el producto existe antes de eliminarlo
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    await Products.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Producto eliminado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar el producto' });
+  }
+};
+
  
