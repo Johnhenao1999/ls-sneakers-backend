@@ -1,15 +1,68 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import Usuario from "../models/admin.users.js";
 
 const SECRET_KEY = "LSNEAKERSTOKENSECRET"; // Cámbialo en producción
 
-export const adminLogin = (req, res) => {
-  const { username, password } = req.body;
+const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_super_segura'; // Usa variables de entorno en producción
+const JWT_EXPIRES_IN = '1d'; // Duración del token
 
-  if (username === "admin" && password === "admin") {
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "2h" });
+// 🟢 Login
+export const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    return res.status(200).json({ token });
+  try {
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const esValida = await bcrypt.compare(password, usuario.password);
+    if (!esValida) {
+      return res.status(401).json({ error: 'Contraseña incorrecta' });
+    }
+
+    const token = jwt.sign(
+      { id: usuario._id, email: usuario.email },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.json({ mensaje: 'Login exitoso', token, usuario: { id: usuario._id, email: usuario.email, nombre: usuario.nombre } });
+  } catch (error) {
+    console.error("❌ Error en login:", error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// 🔵 Registro
+export const registrar = async (req, res) => {
+  const { nombre, email, password } = req.body;
+
+  if (!nombre || !email || !password) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
 
-  res.status(401).json({ error: "Credenciales incorrectas" });
+  try {
+    // Verifica si el usuario ya existe
+    const existe = await Usuario.findOne({ email });
+    if (existe) {
+      return res.status(400).json({ error: 'Ya existe un usuario con ese correo' });
+    }
+
+    const nuevoUsuario = new Usuario({ nombre, email, password });
+    await nuevoUsuario.save();
+
+    res.status(201).json({ mensaje: 'Usuario registrado exitosamente', usuario: { id: nuevoUsuario._id, email: nuevoUsuario.email, nombre: nuevoUsuario.nombre } });
+  } catch (error) {
+    console.error("❌ Error al registrar usuario:", error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+
+// 🔴 Logout (sólo simbólico en JWT)
+export const logout = async (req, res) => {
+  // El logout en JWT es manejado del lado del cliente: se borra el token
+  res.json({ mensaje: 'Logout exitoso. Borra el token en el cliente.' });
 };
