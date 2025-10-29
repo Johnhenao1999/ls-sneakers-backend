@@ -8,7 +8,7 @@ const app = express();
 
 // Configurar CORS
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://lsneakers.vercel.app'], // Acepta ambos orígenes
+  origin: ['http://localhost:5173', 'https://lsneakers.vercel.app', 'https://sneakersls.com'], // Acepta ambos orígenes
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
@@ -19,7 +19,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:5173', 'https://lsneakers.vercel.app'];
+  const allowedOrigins = ['http://localhost:5173', 'https://lsneakers.vercel.app', 'https://sneakersls.com'];
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
