@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { login, registrar, logout } from "../controllers/auth.controller.js";
 import { createProduct, getProducts, updateProduct, deleteProduct  } from "../controllers/products.controller.js";
+import { crearOrden, listarOrdenes, obtenerOrdenPorId, actualizarEstadoOrden, eliminarOrden } from "../controllers/order.controller.js";
 
 const router = Router();
 
@@ -11,5 +12,11 @@ router.post('/products', createProduct)
 router.get('/products', getProducts);
 router.put('/products/:id', updateProduct);
 router.delete('/products/:id', deleteProduct);
+
+router.post('/orders', crearOrden);
+router.get('/orders', listarOrdenes);
+router.get('/orders/:id', obtenerOrdenPorId);
+router.put('/orders/:id', actualizarEstadoOrden);
+router.delete('/orders/:id', eliminarOrden);
 
 export default router;
