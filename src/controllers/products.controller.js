@@ -1,16 +1,40 @@
-import Products from '../models/products.model.js';
+import Products from "../models/products.model.js";
+import slugify from "slugify";
 
-// Endpoint para crear un producto (sin manejo de imágenes)
+/**
+ * 🧩 Crear un nuevo producto
+ */
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, discountPrice, onSale , imageUrls, branch, gender , sizes } = req.body;
+    const {
+      name,
+      price,
+      discountPrice,
+      onSale,
+      imageUrls,
+      branch,
+      gender,
+      sizes,
+    } = req.body;
 
-    // Validar si falta algún dato necesario
-    if (!name || !price || imageUrls?.length === 0 || !branch || !gender || !Array.isArray(sizes) || sizes.length === 0) {
-      return res.status(400).json({ error: 'Todos los campos obligatorios deben ser proporcionados correctamente' });
-    }    
+    // 🧠 Validación básica
+    if (
+      !name ||
+      !price ||
+      !Array.isArray(imageUrls) ||
+      imageUrls.length === 0 ||
+      !branch ||
+      !gender ||
+      !Array.isArray(sizes) ||
+      sizes.length === 0
+    ) {
+      return res.status(400).json({
+        error:
+          "Todos los campos obligatorios deben ser proporcionados correctamente.",
+      });
+    }
 
-    // Crear y guardar el producto en la base de datos
+    // 🚀 Crear producto
     const newProduct = new Products({
       name,
       price,
@@ -19,83 +43,141 @@ export const createProduct = async (req, res) => {
       imageUrls,
       branch,
       gender,
-      sizes
+      sizes,
     });
 
     await newProduct.save();
-    res.status(201).json(newProduct);
-  } catch (error) { 
-    console.error(error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+
+    return res.status(201).json({
+      message: "Producto creado exitosamente",
+      product: newProduct,
+    });
+  } catch (error) {
+    console.error("❌ Error al crear producto:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
-
-// Endpoint para obtener todos los productos
+/**
+ * 📦 Obtener todos los productos
+ */
 export const getProducts = async (req, res) => {
   try {
-    // Recuperar todos los productos de la base de datos
-    const products = await Products.find(); // Si usas MongoDB, `find()` obtiene todos los documentos
+    const products = await Products.find().sort({ createdAt: -1 });
 
-    // Si no hay productos, devuelve un mensaje vacío
-    if (products.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron productos' });
+    if (!products.length) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron productos registrados." });
     }
 
-    // Enviar los productos como respuesta
-    res.status(200).json(products);
+    return res.status(200).json(products);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener los productos' });
+    console.error("❌ Error al obtener productos:", error);
+    return res.status(500).json({ error: "Error al obtener los productos" });
   }
 };
 
-// Endpoint para actualizar un producto por ID
+/**
+ * 🔍 Obtener un producto por su slug
+ */
+export const getProductBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const product = await Products.findOne({ slug });
+
+    if (!product) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    return res.status(200).json(product);
+  } catch (error) {
+    console.error("❌ Error al obtener producto por slug:", error);
+    return res.status(500).json({ error: "Error al obtener el producto" });
+  }
+};
+
+/**
+ * ✏️ Actualizar un producto por ID
+ */
 export const updateProduct = async (req, res) => {
   try {
-    console.log(req.params)
-    const { id } = req.params; // Obtener el ID del producto desde los parámetros de la URL
-    const { name, price, discountPrice, onSale, imageUrls, branch, gender, sizes } = req.body;
-    console.log(req.body)
+    const { id } = req.params;
+    const {
+      name,
+      price,
+      discountPrice,
+      onSale,
+      imageUrls,
+      branch,
+      gender,
+      sizes,
+    } = req.body;
 
-    // Verificar si el producto existe
     const existingProduct = await Products.findById(id);
     if (!existingProduct) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
+      return res.status(404).json({ error: "Producto no encontrado" });
     }
-   
-    // Actualizar el producto con los nuevos datos 
+
     const updatedProduct = await Products.findByIdAndUpdate(
       id,
       { name, price, discountPrice, onSale, imageUrls, branch, gender, sizes },
-      { new: true, runValidators: true } // new: true devuelve el producto actualizado
+      { new: true, runValidators: true }
     );
 
-    res.status(200).json(updatedProduct);
+    return res.status(200).json({
+      message: "Producto actualizado exitosamente",
+      product: updatedProduct,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al actualizar el producto' }); 
+    console.error("❌ Error al actualizar producto:", error);
+    return res.status(500).json({ error: "Error al actualizar el producto" });
   }
 };
 
-// Endpoint para eliminar un producto por ID
+/**
+ * 🗑️ Eliminar un producto por ID
+ */
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Verificar si el producto existe antes de eliminarlo
     const product = await Products.findById(id);
     if (!product) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
+      return res.status(404).json({ error: "Producto no encontrado" });
     }
 
     await Products.findByIdAndDelete(id);
 
-    res.status(200).json({ message: 'Producto eliminado correctamente' });
+    return res
+      .status(200)
+      .json({ message: "Producto eliminado correctamente" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al eliminar el producto' });
+    console.error("❌ Error al eliminar producto:", error);
+    return res.status(500).json({ error: "Error al eliminar el producto" });
   }
 };
 
- 
+export const generateSlugsForExistingProducts = async (req, res) => {
+  try {
+    const products = await Products.find({
+      $or: [{ slug: { $exists: false } }, { slug: "" }],
+    });
+
+    if (products.length === 0) {
+      return res.status(200).json({ message: "Todos los productos ya tienen slug" });
+    }
+
+    for (const product of products) {
+      product.slug = slugify(product.name, { lower: true, strict: true });
+      await product.save();
+    }
+
+    return res.status(200).json({
+      message: `Slugs generados correctamente para ${products.length} productos.`,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error al generar los slugs" });
+  }
+};
