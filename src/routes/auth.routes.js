@@ -22,6 +22,8 @@ import {
   eliminarOrden,
 } from "../controllers/order.controller.js";
 
+import { getBrands, createBrand, deleteBrand } from "../controllers/brand.controller.js";
+
 const router = Router();
 
 /* ------------------ 🔐 AUTENTICACIÓN ------------------ */
@@ -44,5 +46,9 @@ router.get("/orders", listarOrdenes);
 router.get("/orders/:id", obtenerOrdenPorId);
 router.put("/orders/:id", actualizarEstadoOrden);
 router.delete("/orders/:id", eliminarOrden);
+
+router.get("/brands", getBrands);
+router.post("/brands", createBrand);
+router.delete("/brands/:id", deleteBrand);
 
 export default router;
