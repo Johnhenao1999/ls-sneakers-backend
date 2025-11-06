@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema(
       direccion: { type: String, required: true },
       formaPago: {
         type: String,
-        enum: ["Contra entrega", "Transferencia", "Nequi / Daviplata"],
+        enum: ["Contra entrega (Cali - Buga)", "Bancolombia", "Nequi / Daviplata"],
         required: true,
       },
       observaciones: { type: String, default: "" },
