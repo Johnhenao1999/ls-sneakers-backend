@@ -181,3 +181,36 @@ export const generateSlugsForExistingProducts = async (req, res) => {
     return res.status(500).json({ error: "Error al generar los slugs" });
   }
 };
+
+export const applyGlobalSale = async (req, res) => {
+  try {
+    // Obtener todos los productos
+    const products = await Products.find();
+
+    if (!products.length) {
+      return res.status(404).json({ error: "No hay productos para actualizar." });
+    }
+
+    // Calcular descuento y actualizar cada producto
+    for (const product of products) {
+      const priceNum = Number(product.price);
+
+      // Calcular descuento del 20%
+      const discount = Math.round(priceNum * 0.20);
+      const newPrice = priceNum - discount;
+
+      product.onSale = true;
+      product.discountPrice = newPrice.toString(); // si tu esquema lo guarda como string
+
+      await product.save();
+    }
+
+    return res.status(200).json({
+      message: "Descuentos del 20% aplicados exitosamente a todos los productos.",
+      totalUpdated: products.length,
+    });
+  } catch (error) {
+    console.error("❌ Error al aplicar descuentos:", error);
+    return res.status(500).json({ error: "Error al aplicar los descuentos" });
+  }
+};

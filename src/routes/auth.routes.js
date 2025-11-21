@@ -11,7 +11,8 @@ import {
   getProductBySlug,
   updateProduct,
   deleteProduct,
-  generateSlugsForExistingProducts,
+  generateSlugsForExistingProducts, 
+  applyGlobalSale
 } from "../controllers/products.controller.js";
 
 import {
@@ -19,7 +20,7 @@ import {
   listarOrdenes,
   obtenerOrdenPorId,
   actualizarEstadoOrden,
-  eliminarOrden,
+  eliminarOrden
 } from "../controllers/order.controller.js";
 
 import { getBrands, createBrand, deleteBrand } from "../controllers/brand.controller.js";
@@ -39,6 +40,7 @@ router.get("/products", getProducts);
 router.get("/product/:slug", getProductBySlug);
 router.put("/products/:id", updateProduct);
 router.delete("/products/:id", deleteProduct);
+router.post("/products/apply-global-sale", applyGlobalSale);
 
 /* ------------------ 🧾 ÓRDENES ------------------ */
 router.post("/orders", crearOrden);
