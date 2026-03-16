@@ -184,6 +184,25 @@ export const generateSlugsForExistingProducts = async (req, res) => {
 
 export const applyGlobalSale = async (req, res) => {
   try {
+    const { discountPercentage } = req.body;
+
+    // Validar que se proporcione el porcentaje de descuento
+    if (discountPercentage === undefined || discountPercentage === null) {
+      return res.status(400).json({ 
+        error: "El porcentaje de descuento es requerido.",
+        example: { discountPercentage: 20 }
+      });
+    }
+
+    const percentage = Number(discountPercentage);
+
+    // Validar que sea un número válido entre 0 y 100
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      return res.status(400).json({ 
+        error: "El porcentaje de descuento debe ser un número entre 0 y 100." 
+      });
+    }
+
     // Obtener todos los productos
     const products = await Products.find();
 
@@ -195,19 +214,20 @@ export const applyGlobalSale = async (req, res) => {
     for (const product of products) {
       const priceNum = Number(product.price);
 
-      // Calcular descuento del 20%
-      const discount = Math.round(priceNum * 0.20);
+      // Calcular descuento con el porcentaje recibido
+      const discount = Math.round(priceNum * (percentage / 100));
       const newPrice = priceNum - discount;
 
-      product.onSale = true;
-      product.discountPrice = newPrice.toString(); // si tu esquema lo guarda como string
+      product.onSale = percentage > 0;
+      product.discountPrice = newPrice.toString();
 
       await product.save();
     }
 
     return res.status(200).json({
-      message: "Descuentos del 20% aplicados exitosamente a todos los productos.",
+      message: `Descuento del ${percentage}% aplicado exitosamente a todos los productos.`,
       totalUpdated: products.length,
+      discountApplied: percentage,
     });
   } catch (error) {
     console.error("❌ Error al aplicar descuentos:", error);
