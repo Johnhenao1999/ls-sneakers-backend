@@ -40,7 +40,7 @@ router.get("/products", getProducts);
 router.get("/product/:slug", getProductBySlug);
 router.put("/products/:id", updateProduct);
 router.delete("/products/:id", deleteProduct);
-router.post("/products/apply-global-sale", applyGlobalSale);
+router.post("/products/apply-sale", applyGlobalSale);
 
 /* ------------------ 🧾 ÓRDENES ------------------ */
 router.post("/orders", crearOrden);
